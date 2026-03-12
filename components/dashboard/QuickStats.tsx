@@ -49,19 +49,19 @@ export function QuickStats({
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {stats.map((stat) => (
         <Card key={stat.label} hover>
-          <CardContent className="flex items-center gap-4">
-            <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-              <stat.icon className={`h-6 w-6 ${stat.color}`} />
+          <CardContent className="flex items-center gap-2 md:gap-3 p-3 md:p-4">
+            <div className={`p-2 md:p-3 rounded-lg flex-shrink-0 ${stat.bgColor}`}>
+              <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.color}`} />
             </div>
-            <div>
-              <p className="text-sm text-text-secondary">{stat.label}</p>
-              <p className="text-2xl font-bold mono-number">
+            <div className="min-w-0">
+              <p className="text-xs text-text-secondary leading-tight truncate">{stat.label}</p>
+              <p className="text-xl md:text-2xl font-bold mono-number">
                 {stat.value}
                 {stat.suffix && (
-                  <span className="text-sm font-normal text-text-secondary ml-1">
+                  <span className="text-xs md:text-sm font-normal text-text-secondary ml-1">
                     {stat.suffix}
                   </span>
                 )}

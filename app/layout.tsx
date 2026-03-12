@@ -32,8 +32,25 @@ export default function RootLayout({
       >
         <div className="flex min-h-screen">
           <Sidebar />
-          <main className="flex-1 ml-64 p-6">
-            {children}
+          {/* モバイル: サイドバーなし・ハンバーガー分の上部余白 */}
+          {/* デスクトップ: ml-64 でサイドバー分シフト */}
+          <main className="flex-1 md:ml-64 min-w-0 flex flex-col">
+            <div className="flex-1 pt-14 md:pt-0 px-4 md:px-6 py-4 md:py-6">
+              {children}
+            </div>
+            {/* グローバルフッター（全ページ共通） */}
+            <footer className="mt-6 px-4 md:px-6 pb-6 border-t border-surface-light pt-4">
+              <p className="text-xs text-text-muted leading-relaxed">
+                ⚠️ <strong className="text-text-secondary">免責事項:</strong>{" "}
+                本サービスは教育目的のみです。投資判断は自己責任でお願いします。
+                当サービスはWarren Buffett氏とは一切関係ありません。
+                掲載情報は情報提供を目的としており、投資助言ではありません。
+                過去のパフォーマンスは将来の結果を保証しません。
+              </p>
+              <p className="text-xs text-text-muted mt-1">
+                © 2025 Buffett Analyzer Pro · データ提供: Yahoo Finance · 教育目的のみ
+              </p>
+            </footer>
           </main>
         </div>
       </body>

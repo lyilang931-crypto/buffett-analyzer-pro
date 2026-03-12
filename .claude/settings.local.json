@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000 \")",
+      "Bash(findstr LISTENING)",
+      "Bash(findstr \":3001 \")",
+      "Bash(taskkill /PID 84952 /F)",
+      "Bash(taskkill /PID 74716 /F)",
+      "Bash(python3 -c \":*)",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{const m=JSON.parse\\(d\\).chart.result[0].meta;console.log\\(''Price:'',m.regularMarketPrice,''52wH:'',m.fiftyTwoWeekHigh,''52wL:'',m.fiftyTwoWeekLow,''Keys:'',Object.keys\\(m\\).join\\('',''\\)\\)}\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{try{const r=JSON.parse\\(d\\).quoteSummary.result[0];const fd=r.financialData;console.log\\(''ROE:'',fd.returnOnEquity?.raw,''GrossMargin:'',fd.grossMargins?.raw,''Revenue:'',fd.totalRevenue?.raw,''RevenueGrowth:'',fd.revenueGrowth?.raw\\)}catch\\(e\\){console.log\\(''Error:'',d.slice\\(0,300\\)\\)}}\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{try{const r=JSON.parse\\(d\\).quoteSummary.result[0];const fd=r.financialData;console.log\\(''ROE:'',fd.returnOnEquity.raw*100,''%''\\);console.log\\(''GrossMargin:'',fd.grossMargins.raw*100,''%''\\);console.log\\(''OpMargin:'',fd.operatingMargins.raw*100,''%''\\);console.log\\(''Revenue:'',fd.totalRevenue.raw\\);console.log\\(''D/E:'',fd.debtToEquity.raw\\)}catch\\(e\\){console.log\\(''Error:'',d.slice\\(0,500\\)\\)}}\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{const m=JSON.parse\\(d\\).chart.result[0].meta;console.log\\(JSON.stringify\\(m,null,2\\)\\)}\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{const r=JSON.parse\\(d\\);console.log\\(''Search OK:'', r.success, ''| Results:'', r.data?.length\\)}\\)\")",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{try{const r=JSON.parse\\(d\\);if\\(r.success\\){const q=r.data.quote;console.log\\(''AAPL price:'',q.price,''signal:'',r.data.buffettAnalysis.signal,''score:'',r.data.buffettAnalysis.totalScore\\)}else{console.log\\(''error:'',r.error\\)}}catch\\(e\\){console.log\\(''parse err:'',d.slice\\(0,200\\)\\)}}\\)\")",
+      "Bash(npm install yahoo-finance2)",
+      "Bash(node -e \"const yf = require\\(''yahoo-finance2''\\); yf.default.quoteSummary\\(''NVDA'', {modules:[''financialData'',''defaultKeyStatistics'']}\\).then\\(r => {console.log\\(''ROE:'',r.financialData.returnOnEquity*100,''%''\\); console.log\\(''GrossMargin:'',r.financialData.grossMargins*100,''%''\\); console.log\\(''Revenue:'',r.financialData.totalRevenue\\); console.log\\(''PE:'',r.defaultKeyStatistics.trailingPE\\)}\\).catch\\(e => console.log\\(''Error:'',e.message\\)\\)\")",
+      "Bash(node -e \":*)",
+      "Bash(node -e \"let d='''';process.stdin.on\\(''data'',c=>d+=c\\);process.stdin.on\\(''end'',\\(\\)=>{const p=JSON.parse\\(d\\);console.log\\(''version:'',p.version,''exports:'',JSON.stringify\\(p.exports||{},null,2\\).slice\\(0,300\\)\\)}\\)\")",
+      "Bash(node -e \"const m = require\\(''yahoo-finance2''\\); console.log\\(Object.keys\\(m\\)\\)\")",
+      "Bash(\"C:\\\\Users\\\\lyila\\\\OneDrive\\\\Desktop\\\\baffett-analyzer-pro\\\\lib\\\\yahoo-finance.ts\":*)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(node -e \"const d=require\\(''fs''\\).readFileSync\\(''/dev/stdin'',''utf8''\\);const j=JSON.parse\\(d\\);console.log\\(''price:'',j.data.quote.price,''score:'',j.data.buffettAnalysis.totalScore,''signal:'',j.data.buffettAnalysis.signal,''10x:'',j.data.buffettAnalysis.tenBaggerProbability,''%'',''targets:'',j.data.priceTargets?.length,''items'',''1yr base:'',j.data.priceTargets?.[0]?.base\\)\")",
+      "Bash(node -e \"const j=require\\(''C:/temp/aapl_test.json''\\);console.log\\(''price:'',j.data.quote.price,''score:'',j.data.buffettAnalysis.totalScore,''signal:'',j.data.buffettAnalysis.signal,''10x:'',j.data.buffettAnalysis.tenBaggerProbability+''%'',''targets:'',j.data.priceTargets?.length+''items'',''1yr:'',j.data.priceTargets?.[0]?.base\\)\")",
+      "Bash(npx next build)"
+    ]
+  }
+}

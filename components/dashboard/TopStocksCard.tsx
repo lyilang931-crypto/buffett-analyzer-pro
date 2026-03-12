@@ -136,19 +136,21 @@ export function TopStocksCard({ stocks }: TopStocksCardProps) {
 
                   {/* 銘柄名 */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="font-bold text-text-primary group-hover:text-gold transition-colors">
                         {stock.symbol}
                       </span>
+                      {/* セクターはデスクトップのみ表示 */}
                       {stock.sector && (
-                        <span className="text-xs text-text-muted bg-surface-light px-1.5 py-0.5 rounded">
+                        <span className="hidden sm:inline text-xs text-text-muted bg-surface-light px-1.5 py-0.5 rounded">
                           {stock.sector}
                         </span>
                       )}
                       {ba.tenBaggerProbability >= 50 && (
                         <span className="flex items-center gap-0.5 text-xs text-gold bg-gold/10 border border-gold/30 px-1.5 py-0.5 rounded-full">
                           <Star className="h-2.5 w-2.5" />
-                          10倍候補
+                          <span className="hidden sm:inline">10倍候補</span>
+                          <span className="sm:hidden">10x</span>
                         </span>
                       )}
                     </div>
@@ -272,7 +274,7 @@ export function TopStocksCard({ stocks }: TopStocksCardProps) {
                     </span>
                   </div>
 
-                  {/* 1年後予測 */}
+                  {/* 1年後予測（モバイルはターゲットのみ、デスクトップはレンジも） */}
                   {stock.priceTarget1yr && (
                     <div className="flex items-center gap-1">
                       <TrendingUp className="h-3 w-3 text-text-muted" />
@@ -280,16 +282,16 @@ export function TopStocksCard({ stocks }: TopStocksCardProps) {
                       <span className="text-xs font-bold text-success mono-number">
                         {formatPrice(stock.priceTarget1yr.base, stock.symbol)}
                       </span>
-                      <span className="text-xs text-text-muted">
+                      <span className="hidden sm:inline text-xs text-text-muted">
                         ({stock.priceTarget1yr.conservative}〜
                         {stock.priceTarget1yr.optimistic})
                       </span>
                     </div>
                   )}
 
-                  {/* 時価総額 */}
+                  {/* 時価総額（デスクトップのみ） */}
                   {stock.marketCap > 0 && (
-                    <span className="text-xs text-text-muted">
+                    <span className="hidden md:inline text-xs text-text-muted">
                       {formatMarketCap(stock.marketCap)}
                     </span>
                   )}

@@ -13,7 +13,7 @@ interface SearchResult {
   quoteType: string;
 }
 
-export function SearchBar() {
+export function SearchBar({ onSelect }: { onSelect?: () => void } = {}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,6 +86,7 @@ export function SearchBar() {
   const navigateToStock = (symbol: string) => {
     setIsOpen(false);
     setQuery("");
+    onSelect?.();
     router.push(`/analyze/${symbol}`);
   };
 

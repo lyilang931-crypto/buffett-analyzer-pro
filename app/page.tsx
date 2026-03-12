@@ -37,13 +37,22 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* 免責事項バナー */}
+      <div className="flex items-start gap-2 p-3 bg-gold/5 border border-gold/20 rounded-lg text-xs text-text-muted leading-relaxed">
+        <span className="flex-shrink-0 mt-0.5">⚠️</span>
+        <span>
+          <strong className="text-text-secondary">教育目的のみ。</strong>
+          投資判断は自己責任でお願いします。当サービスはWarren Buffett氏とは一切関係ありません。
+        </span>
+      </div>
+
       {/* ヘッダー */}
       <div>
-        <h1 className="text-2xl font-bold text-gold-gradient">
+        <h1 className="text-xl md:text-2xl font-bold text-gold-gradient leading-tight">
           バフェット分析ダッシュボード
         </h1>
-        <p className="text-text-secondary mt-1">
+        <p className="text-sm text-text-secondary mt-1">
           バフェットの7原則に基づくリアルタイム銘柄分析
         </p>
       </div>

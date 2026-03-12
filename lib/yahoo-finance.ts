@@ -397,3 +397,60 @@ export async function getROEHistory(
     return [];
   }
 }
+
+// ---------------------------------------------------------------------------
+// getMarketIndices — S&P500 / NASDAQ / DOW / VIX をリアルタイム取得
+// ---------------------------------------------------------------------------
+
+export interface MarketIndex {
+  symbol: string;
+  label: string;
+  value: number;
+  change: number;        // 前日比（点数）
+  changePercent: number; // 前日比（%）
+}
+
+export async function getMarketIndices(): Promise<{
+  sp500: { value: number; change: number };
+  nasdaq: { value: number; change: number };
+  dow: { value: number; change: number };
+  vix: { value: number; change: number };
+}> {
+  const FALLBACK = {
+    sp500:  { value: 5500,  change: 0 },
+    nasdaq: { value: 17400, change: 0 },
+    dow:    { value: 40500, change: 0 },
+    vix:    { value: 18,    change: 0 },
+  };
+
+  try {
+    const [sp500, nasdaq, dow, vix] = await Promise.all([
+      getQuote('^GSPC'),
+      getQuote('^IXIC'),
+      getQuote('^DJI'),
+      getQuote('^VIX'),
+    ]);
+
+    return {
+      sp500: {
+        value:  sp500?.regularMarketPrice    ?? FALLBACK.sp500.value,
+        change: sp500?.regularMarketChangePercent ?? 0,
+      },
+      nasdaq: {
+        value:  nasdaq?.regularMarketPrice    ?? FALLBACK.nasdaq.value,
+        change: nasdaq?.regularMarketChangePercent ?? 0,
+      },
+      dow: {
+        value:  dow?.regularMarketPrice    ?? FALLBACK.dow.value,
+        change: dow?.regularMarketChangePercent ?? 0,
+      },
+      vix: {
+        value:  vix?.regularMarketPrice    ?? FALLBACK.vix.value,
+        change: vix?.regularMarketChangePercent ?? 0,
+      },
+    };
+  } catch (err) {
+    console.error('[yahoo-finance] getMarketIndices error:', err);
+    return FALLBACK;
+  }
+}

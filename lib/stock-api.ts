@@ -237,10 +237,23 @@ export async function getCompetitors(symbol: string): Promise<CompetitorComparis
 // バフェット指数取得
 export async function getBuffettIndex(): Promise<BuffettIndex> {
   try {
-    // 米国市場の時価総額とGDPを使用（将来的にAPIから取得）
-    // デモデータ（API制限時のフォールバック）
-    const totalMarketCap = 50e12; // 約50兆ドル
-    const gdp = 27e12; // 約27兆ドル
+    // Wilshire 5000 Total Market Index (^W5000) を時価総額の代理指標として使用
+    // 指数の1ポイント ≒ 約10億ドル（米国全株式時価総額の近似）
+    const { getQuote } = await import("./yahoo-finance");
+    const wilshire = await getQuote("^W5000");
+
+    // 米国名目GDP（四半期ごとの更新のため推定値を使用、単位:兆ドル）
+    // 2024年実績 約28.7兆ドル
+    const gdp = 28.7e12;
+
+    let totalMarketCap: number;
+    if (wilshire && (wilshire.regularMarketPrice ?? 0) > 0) {
+      // Wilshire5000の1ポイント ≒ 10億ドル
+      totalMarketCap = (wilshire.regularMarketPrice ?? 0) * 1e9;
+    } else {
+      totalMarketCap = 52e12; // フォールバック（2024年末水準）
+    }
+
     const value = (totalMarketCap / gdp) * 100;
 
     const statusMap = {
@@ -269,13 +282,12 @@ export async function getBuffettIndex(): Promise<BuffettIndex> {
     };
   } catch (error) {
     console.error("Failed to fetch Buffett Index:", error);
-    // フォールバック値
     return {
       value: 185,
       marketStatus: "significantly_overvalued",
       statusLabel: "大幅割高 - 警戒",
-      totalMarketCap: 50e12,
-      gdp: 27e12,
+      totalMarketCap: 52e12,
+      gdp: 28.7e12,
       historicalAverage: 85,
       lastUpdated: new Date().toISOString(),
     };

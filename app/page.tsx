@@ -6,12 +6,14 @@ import {
 } from "@/components/dashboard";
 import { getDashboardStocks } from "@/lib/dashboard-stocks";
 import { getBuffettIndex } from "@/lib/stock-api";
+import { getMarketIndices } from "@/lib/yahoo-finance";
 
 export default async function DashboardPage() {
   // リアルデータを並列取得
-  const [stocks, buffettIndex] = await Promise.all([
+  const [stocks, buffettIndex, marketData] = await Promise.all([
     getDashboardStocks(),
     getBuffettIndex(),
+    getMarketIndices(),
   ]);
 
   // 統計計算（7原則ベース）
@@ -27,14 +29,6 @@ export default async function DashboardPage() {
       0
     ) / Math.max(stocks.length, 1)
   );
-
-  // デモ市場データ
-  const marketData = {
-    sp500: { value: 5234.18, change: 0.82 },
-    nasdaq: { value: 16428.82, change: 1.24 },
-    dow: { value: 39127.14, change: 0.35 },
-    vix: { value: 13.25, change: -2.15 },
-  };
 
   return (
     <div className="space-y-5">

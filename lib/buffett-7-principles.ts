@@ -195,15 +195,21 @@ export function evaluateBuffett7Principles(
   );
 
   // CEO評判スコア（known CEOのみ）
-  const { score: ceoScore, ceo } = getCEOScore(quote.symbol ?? '');
+  const { score: ceoScore, innovatorScore, ceo } = getCEOScore(quote.symbol ?? '');
   const mgmtScore = ceoScore >= 0
-    ? quantScore * 0.6 + ceoScore * 0.4   // CEO既知: 定量60% + CEO40%
+    ? quantScore * 0.6 + ceoScore * 0.4   // CEO既知: 定量60% + バフェット目線CEO40%
     : quantScore;                           // CEO不明: 定量のみ
 
-  // details文字列
-  const mgmtDetails = ceo
-    ? `${ceo.name} (${ceo.title}) | ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | CEO評価: ${ceoScore}/100`
-    : `ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | 純利益率: ${nm.toFixed(1)}%`;
+  // details文字列: バフェット目線と起業家目線の両方を表示
+  let mgmtDetails: string;
+  if (ceo) {
+    const innovatorNote = ceo.isFounder && innovatorScore >= 0
+      ? ` | 起業家目線: ${innovatorScore}/100`
+      : '';
+    mgmtDetails = `${ceo.name} (${ceo.title}) | ROE: ${roe.toFixed(1)}% | バフェット目線: ${ceoScore}/100${innovatorNote}`;
+  } else {
+    mgmtDetails = `ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | 純利益率: ${nm.toFixed(1)}%`;
+  }
 
   principles.push({
     name: "優れた経営者への信頼",

@@ -6,6 +6,8 @@ export interface CEOReputation {
   capitalAllocationScore: number; // 0-100: ROE/buybacks/dividends track record
   visionScore: number;            // 0-100: strategic vision
   controversyPenalty: number;     // 0-50: subtract for controversies/risks
+  founderImpactScore: number;     // 0-100: 社会変革・産業創造・株主価値創造の実績
+  isFounder: boolean;             // 創業者または会社を根本から変えた変革者か
   highlights: string[];
   concerns: string[];
 }
@@ -19,6 +21,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 95,  // Massive buybacks, consistent dividends
     visionScore: 75,
     controversyPenalty: 5,
+    founderImpactScore: 65,  // ジョブズが作った土台を守り拡大。M1チップ転換・サービス化は評価できる
+    isFounder: false,
     highlights: ['過去10年で株主還元$1兆超', 'サービス部門を育て安定収益化', '安定したサプライチェーン管理'],
     concerns: ['ジョブズ後のイノベーション鈍化懸念'],
   },
@@ -29,6 +33,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 97,
     visionScore: 100,
     controversyPenalty: 0,
+    founderImpactScore: 100,  // AI・GPU時代を文字通り創った。CUDA戦略は歴史的
+    isFounder: true,
     highlights: [
       'AIブームを10年前から見据えたCUDA戦略 — 競合が真似できない護城河を構築',
       '創業31年・在任中に時価総額を$3兆超へ。バフェット級の長期経営者',
@@ -43,6 +49,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 92,
     visionScore: 96,
     controversyPenalty: 0,
+    founderImpactScore: 80,  // 「死にかけのMicrosoft」をクラウド/AI覇権企業に変革
+    isFounder: false,
     highlights: ['クラウド転換を成功させ時価総額3倍超', 'OpenAI/AI統合でリード', '文化改革と社員エンゲージメント向上'],
     concerns: ['Activision買収等の大型M&Aリスク'],
   },
@@ -53,6 +61,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 82,
     visionScore: 80,
     controversyPenalty: 8,
+    founderImpactScore: 60,
+    isFounder: false,
     highlights: ['YouTube・Cloudを成長させた', 'AI研究（Gemini）で競争力維持', '資本効率改善（buyback拡大）'],
     concerns: ['AI競争でOpenAI/MSFTに後れを取る懸念', '独占規制リスク', 'レイオフ後の文化変容'],
   },
@@ -63,6 +73,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 78,
     visionScore: 85,
     controversyPenalty: 15,
+    founderImpactScore: 80,  // 世界30億人が使うSNSを創業から20年率いた。社会的影響力は圧倒的
+    isFounder: true,
     highlights: ['メタバース失敗後のAI転換が奏功', '2023年「効率化の年」で利益率急回復', 'Instagram/WhatsApp統合'],
     concerns: ['メタバース投資の巨額損失（$40B超）', 'プライバシー規制リスク', 'ユーザー信頼度低下'],
   },
@@ -76,10 +88,13 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     // 起業家・ビジョナリーとしては世界最高水準だが、
     // バフェットが重視する「予測可能性・資本規律・株主への誠実さ」で減点
     controversyPenalty: 18,
+    founderImpactScore: 100,  // EV革命・宇宙民営化・AI・脳神経インターフェース — 人類の方向を変えた
+    isFounder: true,
     highlights: [
       'EV・宇宙・AI・エネルギーを同時変革する史上稀な連続起業家',
       'テスラを単なる自動車会社からエネルギー/AIロボット企業へ転換',
-      'ビジョンの壮大さと実行力はジェンスン・ファンと並ぶ世界最高水準',
+      'SpaceX：民間初の軌道ロケット再使用を実現、宇宙コストを1/10に',
+      'ビジョンの壮大さと実行力は人類史上でも突出した水準',
     ],
     concerns: [
       'X(旧Twitter)買収で$440億超を投入、テスラ経営への集中力が分散',
@@ -95,6 +110,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 80,
     visionScore: 85,
     controversyPenalty: 5,
+    founderImpactScore: 68,  // AWSを社内ゼロから構築した実績は高く評価。創業者ではないが変革者
+    isFounder: false,
     highlights: ['AWSのAI転換を加速', 'コスト削減と利益率改善を実現', 'ベゾス後の安定した移行'],
     concerns: ['ベゾスほどの存在感・ビジョンの差', '労働問題・規制リスク'],
   },
@@ -105,6 +122,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 90,
     visionScore: 78,
     controversyPenalty: 3,
+    founderImpactScore: 50,
+    isFounder: false,
     highlights: ['安定した決済ネットワーク運営', '一貫した株主還元（buyback・配当）', '新興国キャッシュレス化の恩恵'],
     concerns: ['任期が短く実績評価が限定的'],
   },
@@ -115,6 +134,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 88,
     visionScore: 80,
     controversyPenalty: 2,
+    founderImpactScore: 52,
+    isFounder: false,
     highlights: ['フィンテック・暗号資産領域への適切な展開', '安定した収益成長の維持'],
     concerns: ['規制リスク（Visa同様）'],
   },
@@ -125,6 +146,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 99,
     visionScore: 95,
     controversyPenalty: 0,
+    founderImpactScore: 98,  // 投資という行為そのものを変えた。現代の長期投資文化の礎を作った
+    isFounder: true,
     highlights: ['史上最も優れた資本配分者の一人', '1965年以来年平均19.8%のリターン', 'グレッグ・エイベルへの計画的な引き継ぎ'],
     concerns: ['バフェット引退後の後継リスク', '巨大化により高成長が構造的に困難'],
   },
@@ -135,6 +158,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 85,
     visionScore: 76,
     controversyPenalty: 10,
+    founderImpactScore: 55,
+    isFounder: false,
     highlights: ['医薬品・医療機器への集中（消費者部門分離）', '配当王（61年連続増配）'],
     concerns: ['タルク粉石けん訴訟リスク', '後継CEOとして実績評価が発展途上'],
   },
@@ -145,6 +170,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     capitalAllocationScore: 82,
     visionScore: 80,
     controversyPenalty: 5,
+    founderImpactScore: 60,
+    isFounder: false,
     highlights: ['EV戦略の見直しとマルチパスウェイ戦略の明確化', '積極的な株主還元の拡充', '収益性改善への取り組み'],
     concerns: ['BEV化の出遅れ懸念', 'ダイハツ不正問題対応'],
   },
@@ -158,6 +185,8 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     // ビジョナリーとしては孫正義はマスクと並ぶ世界最高水準
     // ただしバフェットが嫌う「借金での大博打」スタイル
     controversyPenalty: 12,
+    founderImpactScore: 95,  // アリババ発掘・日本のネット革命・ARM買収 — アジアで最も影響力のある投資家
+    isFounder: true,
     highlights: [
       '44年の実績 — アリババへの$2000万投資が$1500億超に（ROI数千倍）',
       'AI時代を10年以上前から確信し、ARM買収・Vision Fund設立で先手',
@@ -171,16 +200,34 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
   },
 };
 
-// CEO score for principle #5 (0-100)
-export function getCEOScore(symbol: string): { score: number; ceo: CEOReputation | null } {
+// バフェット目線スコア: 資本規律・株主還元・予測可能性を重視
+// principle #5 に使用
+export function getCEOScore(symbol: string): {
+  score: number;          // バフェット目線 (0-100, -1=unknown)
+  innovatorScore: number; // 起業家・イノベーター目線 (0-100, -1=unknown)
+  ceo: CEOReputation | null;
+} {
   const ceo = CEO_DATABASE[symbol] ?? null;
-  if (!ceo) return { score: -1, ceo: null }; // -1 = unknown, use quantitative only
+  if (!ceo) return { score: -1, innovatorScore: -1, ceo: null };
 
-  const base =
+  // バフェット目線: 資本配分 40% + 評判 35% + ビジョン 25% - 問題減点
+  const buffettBase =
     ceo.reputationScore * 0.35 +
     ceo.capitalAllocationScore * 0.40 +
     ceo.visionScore * 0.25 -
     ceo.controversyPenalty;
 
-  return { score: Math.round(Math.max(0, Math.min(100, base))), ceo };
+  // 起業家・イノベーター目線: 社会変革インパクト 35% + ビジョン 45% + 評判 20% - 問題減点×0.4
+  // → 長期的な社会変革・株式価値創造を優先。短期の資本規律より「世界を変えたか」を重視
+  const innovatorBase =
+    ceo.founderImpactScore * 0.35 +
+    ceo.visionScore * 0.45 +
+    ceo.reputationScore * 0.20 -
+    ceo.controversyPenalty * 0.4;
+
+  return {
+    score: Math.round(Math.max(0, Math.min(100, buffettBase))),
+    innovatorScore: Math.round(Math.max(0, Math.min(100, innovatorBase))),
+    ceo,
+  };
 }

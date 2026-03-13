@@ -1,4 +1,5 @@
 import { YahooQuote, YahooFinancials } from "./yahoo-finance";
+import { getCEOScore } from "./ceo-reputation";
 
 // バフェット7原則の評価結果
 export interface BuffettPrincipleScore {
@@ -181,24 +182,36 @@ export function evaluateBuffett7Principles(
 
   // ----------------------------------------------------------
   // 5. 優れた経営者への信頼
-  // 資本効率（ROE/ROA）と利益率で経営の質を評価
+  // 定量: ROE/ROA/純利益率 (60%) + CEO評判スコア (40%)
   // ----------------------------------------------------------
   const roa = financials.returnOnAssets ?? 0;
   const nm = financials.netMargin ?? 0;
 
-  const mgmtScore = Math.min(100,
-    (roe / 25) * 40 +
-    (roa / 15) * 30 +
-    (nm / 20) * 30
+  // 定量スコア
+  const quantScore = Math.min(100,
+    Math.min(roe / 25, 1) * 40 +
+    Math.min(roa / 15, 1) * 30 +
+    Math.min(nm / 20, 1) * 30
   );
+
+  // CEO評判スコア（known CEOのみ）
+  const { score: ceoScore, ceo } = getCEOScore(quote.symbol ?? '');
+  const mgmtScore = ceoScore >= 0
+    ? quantScore * 0.6 + ceoScore * 0.4   // CEO既知: 定量60% + CEO40%
+    : quantScore;                           // CEO不明: 定量のみ
+
+  // details文字列
+  const mgmtDetails = ceo
+    ? `${ceo.name} (${ceo.title}) | ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | CEO評価: ${ceoScore}/100`
+    : `ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | 純利益率: ${nm.toFixed(1)}%`;
 
   principles.push({
     name: "優れた経営者への信頼",
     nameEn: "Quality Management",
-    description: "株主資本を効率よく活用し高いリターンを生む経営",
+    description: "株主資本を効率よく活用し高いリターンを生む経営 + CEO評価",
     score: Math.round(mgmtScore),
     passed: mgmtScore >= 60,
-    details: `ROE: ${roe.toFixed(1)}% | ROA: ${roa.toFixed(1)}% | 純利益率: ${nm.toFixed(1)}%`,
+    details: mgmtDetails,
     weight: 0.15,
   });
 

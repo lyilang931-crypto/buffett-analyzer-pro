@@ -1,34 +1,16 @@
 import {
   BuffettIndexCard,
-  TopStocksCard,
+  WatchlistStocks,
   MarketOverview,
-  QuickStats,
 } from "@/components/dashboard";
-import { getDashboardStocks } from "@/lib/dashboard-stocks";
 import { getBuffettIndex } from "@/lib/stock-api";
 import { getMarketIndices } from "@/lib/yahoo-finance";
 
 export default async function DashboardPage() {
-  // リアルデータを並列取得
-  const [stocks, buffettIndex, marketData] = await Promise.all([
-    getDashboardStocks(),
+  const [buffettIndex, marketData] = await Promise.all([
     getBuffettIndex(),
     getMarketIndices(),
   ]);
-
-  // 統計計算（7原則ベース）
-  const passingStocks = stocks.filter(
-    (s) => s.buffettAnalysis.signal === "BUY"
-  ).length;
-  const tenBaggerCandidates = stocks.filter(
-    (s) => s.buffettAnalysis.tenBaggerProbability >= 50
-  ).length;
-  const avgMoatScore = Math.round(
-    stocks.reduce(
-      (sum, s) => sum + (s.buffettAnalysis.principles[1]?.score ?? 0),
-      0
-    ) / Math.max(stocks.length, 1)
-  );
 
   return (
     <div className="space-y-5">
@@ -41,7 +23,6 @@ export default async function DashboardPage() {
         </span>
       </div>
 
-      {/* ヘッダー */}
       <div>
         <h1 className="text-xl md:text-2xl font-bold text-gold-gradient leading-tight">
           バフェット分析ダッシュボード
@@ -51,31 +32,17 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      {/* クイック統計 */}
-      <QuickStats
-        totalAnalyzed={stocks.length}
-        passingStocks={passingStocks}
-        tenBaggerCandidates={tenBaggerCandidates}
-        avgMoatScore={avgMoatScore}
-      />
-
-      {/* メインコンテンツ */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* バフェット指数 */}
         <div className="lg:col-span-1">
           <BuffettIndexCard index={buffettIndex} />
         </div>
-
-        {/* トップ銘柄（7原則表示） */}
         <div className="lg:col-span-2">
-          <TopStocksCard stocks={stocks} />
+          <WatchlistStocks />
         </div>
       </div>
 
-      {/* 市場概況 */}
       <MarketOverview data={marketData} />
 
-      {/* バフェットの言葉 */}
       <div className="bg-surface border border-gold/20 rounded-xl p-6">
         <blockquote className="text-lg text-text-secondary italic">
           &ldquo;素晴らしい企業を適正な価格で買う方が、普通の企業を素晴らしい価格で買うよりもはるかに良い&rdquo;

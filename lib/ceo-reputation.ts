@@ -25,11 +25,15 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
   NVDA: {
     name: 'Jensen Huang', title: 'CEO',
     tenureYears: 31,
-    reputationScore: 97,
-    capitalAllocationScore: 90,
-    visionScore: 99,
+    reputationScore: 99,
+    capitalAllocationScore: 97,
+    visionScore: 100,
     controversyPenalty: 0,
-    highlights: ['AIブームを10年前から見据えたCUDA戦略', 'データセンター売上が3年で10倍超', '創業者CEOとして強いビジョン'],
+    highlights: [
+      'AIブームを10年前から見据えたCUDA戦略 — 競合が真似できない護城河を構築',
+      '創業31年・在任中に時価総額を$3兆超へ。バフェット級の長期経営者',
+      'データセンター売上が3年で10倍超、営業利益率60%超を達成',
+    ],
     concerns: ['高い株価評価に対するプレッシャー'],
   },
   MSFT: {
@@ -65,12 +69,24 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
   TSLA: {
     name: 'Elon Musk', title: 'CEO',
     tenureYears: 15,
-    reputationScore: 55,
-    capitalAllocationScore: 58,
-    visionScore: 92,
-    controversyPenalty: 30,
-    highlights: ['EV市場を創出し産業変革を牽引', 'フルセルフドライビング・エネルギー事業の将来性', 'ブランド認知度は世界最高水準'],
-    concerns: ['X(旧Twitter)・SpaceX等の兼業による集中力分散', '政治的言動によるブランドリスク（欧州販売減少）', '気まぐれな経営判断（株式報酬問題等）', '後継者不在リスク'],
+    reputationScore: 78,
+    capitalAllocationScore: 65,
+    visionScore: 98,
+    // バフェット基準での減点: 兼業リスク・ブランド毀損（欧州販売-40%）・X買収損失
+    // 起業家・ビジョナリーとしては世界最高水準だが、
+    // バフェットが重視する「予測可能性・資本規律・株主への誠実さ」で減点
+    controversyPenalty: 18,
+    highlights: [
+      'EV・宇宙・AI・エネルギーを同時変革する史上稀な連続起業家',
+      'テスラを単なる自動車会社からエネルギー/AIロボット企業へ転換',
+      'ビジョンの壮大さと実行力はジェンスン・ファンと並ぶ世界最高水準',
+    ],
+    concerns: [
+      'X(旧Twitter)買収で$440億超を投入、テスラ経営への集中力が分散',
+      '政治的言動によるブランドリスク（2025年欧州販売台数-40%超）',
+      '株式報酬問題・SEC摩擦など株主との関係で予測困難な側面',
+      '後継者不在リスク（バフェットはこれを最重要視）',
+    ],
   },
   AMZN: {
     name: 'Andy Jassy', title: 'CEO',
@@ -133,14 +149,25 @@ export const CEO_DATABASE: Record<string, CEOReputation> = {
     concerns: ['BEV化の出遅れ懸念', 'ダイハツ不正問題対応'],
   },
   '9984.T': {
-    name: '孫正義', title: '社長',
+    name: '孫正義', title: '社長・創業者',
     tenureYears: 44,
-    reputationScore: 82,
-    capitalAllocationScore: 60,
-    visionScore: 97,
-    controversyPenalty: 18,
-    highlights: ['AI・テクノロジー分野への先見的な大型投資', 'アリババ投資など巨額リターンの実績', 'Vision Fundによるユニコーン発掘'],
-    concerns: ['WeWork等の失敗投資で信頼失墜', '高レバレッジ戦略によるリスク', 'ガバナンス懸念'],
+    reputationScore: 90,
+    capitalAllocationScore: 68,
+    visionScore: 99,
+    // バフェット基準での減点: 高レバレッジ・WeWork損失・ガバナンス
+    // ビジョナリーとしては孫正義はマスクと並ぶ世界最高水準
+    // ただしバフェットが嫌う「借金での大博打」スタイル
+    controversyPenalty: 12,
+    highlights: [
+      '44年の実績 — アリババへの$2000万投資が$1500億超に（ROI数千倍）',
+      'AI時代を10年以上前から確信し、ARM買収・Vision Fund設立で先手',
+      '創業者として30年超の長期経営、日本の起業家の中で突出した国際視野',
+    ],
+    concerns: [
+      'WeWork等のVision Fund1で$40B超の損失（資本配分の失敗例）',
+      '高レバレッジ戦略はバフェットが最も嫌う財務スタイル',
+      '投資先への集中投資によるボラティリティの高さ',
+    ],
   },
 };
 

@@ -16,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Moat | 10倍株を発掘",
-  description: "7つのモート原則で全世界の株式をリアルタイム分析・スクリーニング",
+  title: "Moat | バフェット流10倍株分析",
+  description: "バフェットの7原則で全世界の株式をリアルタイム分析・スクリーニング。Warren Buffett氏・Berkshire Hathaway社とは無関係の独立サービスです。",
 };
 
 export default function RootLayout({
@@ -45,6 +45,7 @@ export default function RootLayout({
                 本サービスは教育目的のみです。投資判断は自己責任でお願いします。
                 掲載情報は情報提供を目的としており、投資助言ではありません。
                 過去のパフォーマンスは将来の結果を保証しません。
+                Warren Buffett氏・Berkshire Hathaway社とは一切無関係です。
               </p>
               <p className="text-xs text-text-muted mt-1">
                 © 2025 Moat · データ提供: Yahoo Finance · 教育目的のみ

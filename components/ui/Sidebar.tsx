@@ -63,7 +63,7 @@ export function Sidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-gold font-bold text-base leading-tight">Moat</h1>
-              <p className="text-text-muted text-xs">価値投資分析</p>
+              <p className="text-text-muted text-xs">バフェット流投資分析</p>
             </div>
             <button
               className="md:hidden p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-surface-light"

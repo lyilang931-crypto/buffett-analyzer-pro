@@ -8,6 +8,7 @@ import {
   Filter,
   TrendingUp,
   BarChart3,
+  Briefcase,
   Menu,
   X,
 } from "lucide-react";
@@ -19,6 +20,7 @@ const navigation = [
   { name: "スクリーニング", href: "/screener", icon: Filter },
   { name: "10倍株候補", href: "/screener?filter=tenbagger", icon: TrendingUp },
   { name: "市場分析", href: "/screener?filter=market", icon: BarChart3 },
+  { name: "BRK ポートフォリオ", href: "/portfolio", icon: Briefcase },
 ];
 
 export function Sidebar() {

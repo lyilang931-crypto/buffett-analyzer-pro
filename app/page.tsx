@@ -19,16 +19,16 @@ export default async function DashboardPage() {
         <span className="flex-shrink-0 mt-0.5">⚠️</span>
         <span>
           <strong className="text-text-secondary">教育目的のみ。</strong>
-          投資判断は自己責任でお願いします。当サービスはWarren Buffett氏とは一切関係ありません。
+          投資判断は自己責任でお願いします。本サービスはいかなる投資家・企業とも無関係です。
         </span>
       </div>
 
       <div>
         <h1 className="text-xl md:text-2xl font-bold text-gold-gradient leading-tight">
-          バフェット分析ダッシュボード
+          Moat ダッシュボード
         </h1>
         <p className="text-sm text-text-secondary mt-1">
-          バフェットの7原則に基づくリアルタイム銘柄分析
+          7つのモート原則に基づくリアルタイム銘柄分析
         </p>
       </div>
 
@@ -47,7 +47,7 @@ export default async function DashboardPage() {
         <blockquote className="text-lg text-text-secondary italic">
           &ldquo;素晴らしい企業を適正な価格で買う方が、普通の企業を素晴らしい価格で買うよりもはるかに良い&rdquo;
         </blockquote>
-        <p className="text-gold mt-2 text-sm">— ウォーレン・バフェット</p>
+        <p className="text-gold mt-2 text-sm">— 価値投資の原則</p>
       </div>
     </div>
   );

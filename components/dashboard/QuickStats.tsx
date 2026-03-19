@@ -25,7 +25,7 @@ export function QuickStats({
       bgColor: "bg-gold/10",
     },
     {
-      label: "バフェット基準達成",
+      label: "7原則クリア",
       value: passingStocks,
       icon: Award,
       color: "text-success",

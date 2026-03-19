@@ -57,11 +57,11 @@ export function Sidebar() {
           {/* ロゴ */}
           <div className="flex h-16 items-center gap-3 px-4 border-b border-surface-light">
             <div className="w-9 h-9 rounded-lg bg-gold-gradient flex items-center justify-center flex-shrink-0">
-              <span className="text-background font-bold text-base">B</span>
+              <span className="text-background font-bold text-base">M</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-gold font-bold text-base leading-tight">Buffett</h1>
-              <p className="text-text-muted text-xs">Analyzer Pro</p>
+              <h1 className="text-gold font-bold text-base leading-tight">Moat</h1>
+              <p className="text-text-muted text-xs">価値投資分析</p>
             </div>
             <button
               className="md:hidden p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-surface-light"
@@ -105,7 +105,7 @@ export function Sidebar() {
 
           {/* フッター */}
           <div className="border-t border-surface-light p-4">
-            <p className="text-xs text-text-muted px-3">© 2025 Buffett Analyzer Pro</p>
+            <p className="text-xs text-text-muted px-3">© 2025 Moat</p>
             <p className="text-xs text-text-muted px-3 mt-0.5">Yahoo Finance API使用</p>
           </div>
         </div>

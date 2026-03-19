@@ -180,7 +180,7 @@ export default function AnalyzePage() {
         signal={buffettAnalysis.signal}
       />
 
-      {/* バフェット7原則 */}
+      {/* 7つのモート原則 */}
       <BuffettPrinciplesCard analysis={buffettAnalysis} />
 
       {/* 株価チャートと経済的な堀 */}
@@ -223,7 +223,7 @@ export default function AnalyzePage() {
         <Card>
           <CardHeader
             title="ROE推移"
-            subtitle="自己資本利益率の履歴（バフェット基準: 15%以上）"
+            subtitle="自己資本利益率の履歴（モート基準: 15%以上）"
             action={
               <span className="text-sm font-semibold mono-number">
                 現在: <span className={(financials.returnOnEquity ?? 0) >= 15 ? "text-success" : "text-warning"}>

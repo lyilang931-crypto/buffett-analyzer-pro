@@ -57,7 +57,7 @@ export function PriceTargetCard({ currentPrice, targets, tenBaggerProbability }:
     <Card>
       <CardHeader
         title="株価目標・未来予測"
-        subtitle="バフェット流DCF + 成長率ベース予測（保守的・標準・楽観的）"
+        subtitle="保守的DCF + 成長率ベース予測（保守的・標準・楽観的）"
         action={
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold/10 border border-gold/30">
             <Target className="h-3.5 w-3.5 text-gold" />

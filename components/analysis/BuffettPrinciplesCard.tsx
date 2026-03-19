@@ -131,8 +131,8 @@ export function BuffettPrinciplesCard({ analysis }: BuffettPrinciplesCardProps) 
   return (
     <Card>
       <CardHeader
-        title="バフェット7原則 自動採点"
-        subtitle={`${passedCount}/7項目クリア · 総合スコア ${analysis.totalScore}点`}
+        title="7つのモート原則 自動採点"
+        subtitle={`${passedCount}/7項目クリア · モートスコア ${analysis.totalScore}点`}
       />
       <CardContent>
         {/* シグナルと総合スコア */}

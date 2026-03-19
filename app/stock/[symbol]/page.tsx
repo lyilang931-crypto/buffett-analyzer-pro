@@ -76,10 +76,10 @@ export default async function StockDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* バフェット基準チェック */}
+      {/* モートスコアチェック */}
       <Card glow={buffettCheck.passed}>
         <CardHeader
-          title="バフェット基準チェック"
+          title="モートスコアチェック"
           subtitle={
             buffettCheck.passed
               ? "全ての基準をクリア"

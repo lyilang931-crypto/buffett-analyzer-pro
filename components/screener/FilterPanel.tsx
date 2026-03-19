@@ -28,7 +28,7 @@ export function FilterPanel({ criteria, onChange }: FilterPanelProps) {
     <Card>
       <CardHeader
         title="スクリーニング条件"
-        subtitle="バフェット基準でフィルタリング"
+        subtitle="モート原則でフィルタリング"
         action={
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={handleReset}>
@@ -140,7 +140,7 @@ export function FilterPanel({ criteria, onChange }: FilterPanelProps) {
                   })
                 }
               >
-                バフェット基準
+                7原則プリセット
               </Button>
               <Button
                 variant="outline"

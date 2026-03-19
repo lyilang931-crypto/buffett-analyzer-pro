@@ -51,7 +51,7 @@ export function ROEChart({ data, height = 200 }: ROEChartProps) {
           stroke="#d4af37"
           strokeDasharray="5 5"
           label={{
-            value: "バフェット基準 15%",
+            value: "モート基準 15%",
             position: "right",
             fill: "#d4af37",
             fontSize: 10,

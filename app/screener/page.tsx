@@ -74,7 +74,7 @@ export default function ScreenerPage() {
           10倍株スクリーニング
         </h1>
         <p className="text-sm text-text-secondary mt-1">
-          世界{loading ? "..." : stocks.length + "銘柄"}をバフェット7原則でリアルタイム採点
+          世界{loading ? "..." : stocks.length + "銘柄"}を7つのモート原則でリアルタイム採点
         </p>
       </div>
 

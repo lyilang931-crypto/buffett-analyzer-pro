@@ -16,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Buffett Analyzer Pro | 10倍株を発掘",
-  description: "バフェット流投資分析で全世界の株式から10倍株候補を発掘",
+  title: "Moat | 10倍株を発掘",
+  description: "7つのモート原則で全世界の株式をリアルタイム分析・スクリーニング",
 };
 
 export default function RootLayout({
@@ -43,12 +43,11 @@ export default function RootLayout({
               <p className="text-xs text-text-muted leading-relaxed">
                 ⚠️ <strong className="text-text-secondary">免責事項:</strong>{" "}
                 本サービスは教育目的のみです。投資判断は自己責任でお願いします。
-                当サービスはWarren Buffett氏とは一切関係ありません。
                 掲載情報は情報提供を目的としており、投資助言ではありません。
                 過去のパフォーマンスは将来の結果を保証しません。
               </p>
               <p className="text-xs text-text-muted mt-1">
-                © 2025 Buffett Analyzer Pro · データ提供: Yahoo Finance · 教育目的のみ
+                © 2025 Moat · データ提供: Yahoo Finance · 教育目的のみ
               </p>
             </footer>
           </main>

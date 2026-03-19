@@ -14,7 +14,7 @@ export function BuffettIndexCard({ index }: BuffettIndexCardProps) {
   return (
     <Card glow>
       <CardHeader
-        title="バフェット指数"
+        title="市場評価指数"
         subtitle="米国株式市場の過熱度"
         action={
           <div className="flex items-center gap-1 text-xs text-text-muted">

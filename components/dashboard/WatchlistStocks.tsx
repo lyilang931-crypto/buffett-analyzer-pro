@@ -107,7 +107,7 @@ export function WatchlistStocks() {
   return (
     <Card>
       <CardHeader
-        title="ウォッチリスト — バフェット7原則評価"
+        title="ウォッチリスト — 7つのモート原則評価"
         subtitle="全7原則をリアルデータで自動採点"
         action={
           <div className="flex items-center gap-2">

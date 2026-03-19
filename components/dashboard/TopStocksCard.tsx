@@ -79,7 +79,7 @@ export function TopStocksCard({ stocks }: TopStocksCardProps) {
   return (
     <Card>
       <CardHeader
-        title="バフェット銘柄 TOP5 — 全7原則評価"
+        title="注目銘柄 TOP5 — モート7原則評価"
         subtitle="7原則すべてをリアルデータで自動採点"
         action={
           <Link
@@ -176,10 +176,10 @@ export function TopStocksCard({ stocks }: TopStocksCardProps) {
                   </div>
                 </div>
 
-                {/* ── Row 2: バフェット7原則 ── */}
+                {/* ── Row 2: モート7原則 ── */}
                 <div className="mb-3">
                   <div className="flex items-center gap-1 mb-1.5">
-                    <span className="text-xs text-text-muted">バフェット7原則:</span>
+                    <span className="text-xs text-text-muted">モート7原則:</span>
                     <span
                       className={cn(
                         "text-xs font-bold",

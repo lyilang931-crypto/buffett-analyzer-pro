@@ -388,11 +388,11 @@ function generateSummary(
 
   let summary = "";
   if (signal === "BUY") {
-    summary = `バフェット基準を${passedPrinciples.length}/7項目クリア。総合スコア${totalScore}点は優秀な水準です。`;
+    summary = `モート7原則を${passedPrinciples.length}/7項目クリア。スコア${totalScore}点は優秀な水準です。`;
   } else if (signal === "HOLD") {
-    summary = `バフェット基準を${passedPrinciples.length}/7項目クリア。投資対象として検討の余地があります。`;
+    summary = `モート7原則を${passedPrinciples.length}/7項目クリア。投資対象として検討の余地があります。`;
   } else {
-    summary = `バフェット基準を${passedPrinciples.length}/7項目のみクリア。現時点での投資は見送りが妥当です。`;
+    summary = `モート7原則を${passedPrinciples.length}/7項目のみクリア。現時点での投資は見送りが妥当です。`;
   }
 
   if (failedPrinciples.length > 0 && failedPrinciples.length <= 3) {

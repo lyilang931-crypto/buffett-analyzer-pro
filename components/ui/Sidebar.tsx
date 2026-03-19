@@ -50,7 +50,7 @@ export function Sidebar() {
       {/* サイドバーパネル */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 h-screen w-64 bg-surface border-r border-surface-light",
+          "fixed left-0 top-0 z-50 h-[100dvh] w-64 bg-surface border-r border-surface-light",
           "transition-transform duration-200 ease-in-out",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}

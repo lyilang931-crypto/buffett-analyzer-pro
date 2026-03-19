@@ -20,15 +20,12 @@ function fmtShares(n: number) {
   if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
   return n.toLocaleString();
 }
-function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
-}
 
 // ──────────────────────────────────────────────────────
 // Change badge
 // ──────────────────────────────────────────────────────
 function ChangeBadge({ holding }: { holding: Holding }) {
-  const { change, changePercent, changeShares } = holding;
+  const { change, changePercent } = holding;
 
   if (change === "NEW") return (
     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
@@ -214,7 +211,7 @@ export default function PortfolioPage() {
   );
 }
 
-function HoldingRow({ holding, totalValue }: { holding: Holding; totalValue: number }) {
+function HoldingRow({ holding }: { holding: Holding; totalValue: number }) {
   const isSold = holding.change === "SOLD";
 
   return (

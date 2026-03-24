@@ -46,31 +46,27 @@ interface WatchlistStock {
 }
 
 export function WatchlistStocks() {
-  const [symbols, setSymbols] = useState<string[]>(DEFAULT_SYMBOLS);
+  const [symbols, setSymbols] = useState<string[]>(() => {
+    // 初期化時に一度だけ読み込む（書き込みエフェクトとの競合を防ぐ）
+    if (typeof window === "undefined") return DEFAULT_SYMBOLS;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as string[];
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch { /* ignore */ }
+    return DEFAULT_SYMBOLS;
+  });
   const [stocks, setStocks] = useState<WatchlistStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [showManager, setShowManager] = useState(false);
   const [addInput, setAddInput] = useState("");
   const [addError, setAddError] = useState("");
 
-  // localStorage から読み込み
+  // localStorage に保存（変更時のみ）
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as string[];
-        if (Array.isArray(parsed) && parsed.length > 0) setSymbols(parsed);
-      }
-    } catch {
-      // ignore parse errors
-    }
-  }, []);
-
-  // localStorage に保存
-  useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols)); } catch {
-      // ignore storage errors
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(symbols)); } catch { /* ignore */ }
   }, [symbols]);
 
   const fetchStocks = useCallback(async () => {
@@ -158,9 +154,14 @@ export function WatchlistStocks() {
               <input
                 type="text"
                 value={addInput}
-                onChange={e => { setAddInput(e.target.value.toUpperCase()); setAddError(""); }}
+                onChange={e => {
+                  // 英数字・ドット・ハイフンのみ許可、自動大文字変換
+                  const val = e.target.value.toUpperCase().replace(/[^A-Z0-9.\-]/g, "");
+                  setAddInput(val);
+                  setAddError("");
+                }}
                 onKeyDown={e => e.key === "Enter" && handleAdd()}
-                placeholder="ティッカー例: 7203.T, AMZN"
+                placeholder="例: AAPL, NVDA, TSM"
                 className="flex-1 px-3 py-1.5 text-xs bg-surface border border-surface-light rounded-lg text-text-primary placeholder:text-text-muted focus:border-gold focus:outline-none"
               />
               <button
@@ -171,6 +172,7 @@ export function WatchlistStocks() {
                 追加
               </button>
             </div>
+            <p className="text-xs text-text-muted/70">※ 英語キーボードで入力してください</p>
             {addError && <p className="text-xs text-danger">{addError}</p>}
             <p className="text-xs text-text-muted">
               米国株: AAPL / 日本株: 7203.T / 韓国株: 005930.KS / 台湾株: 2330.TW

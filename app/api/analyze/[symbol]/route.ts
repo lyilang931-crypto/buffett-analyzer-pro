@@ -6,6 +6,12 @@ import {
   getROEHistory,
 } from "@/lib/yahoo-finance";
 import { evaluateBuffett7Principles } from "@/lib/buffett-7-principles";
+import { getBrandSentiment } from "@/lib/brand-sentiment";
+
+// キャッシュ完全無効化 — 株価はリクエストごとに必ず再取得
+export const dynamic = 'force-dynamic';
+// Vercel Pro: 最大30秒まで延長（Hobbyは10秒固定）
+export const maxDuration = 30;
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +20,10 @@ export async function GET(
   try {
     const symbol = params.symbol.toUpperCase();
 
-    // 並列でデータ取得
+    // 財務データ取得とブランドセンチメントを並列実行
+    // センチメントはtickerシンボルで先行取得（quote取得完了を待たない）
+    const sentimentPromise = getBrandSentiment(symbol, symbol).catch(() => null);
+
     const [quote, financials, priceHistory, roeHistory] = await Promise.all([
       getQuote(symbol),
       getFinancials(symbol),
@@ -38,7 +47,12 @@ export async function GET(
 
     // 安全マージン計算（バフェット原則評価前に実施）
     const currentPrice = quote.regularMarketPrice ?? 0;
-    const intrinsicValue = calculateIntrinsicValue(currentPrice, quote.trailingPE, safeFinancials.earningsGrowth);
+    const intrinsicValue = calculateIntrinsicValue(
+      currentPrice,
+      safeFinancials.trailingEps,    // 株価非依存EPS（優先）
+      quote.trailingPE,              // PEフォールバック
+      safeFinancials.earningsGrowth
+    );
     const safetyMargin = {
       intrinsicValue,
       currentPrice,
@@ -47,16 +61,25 @@ export async function GET(
         : 0,
     };
 
-    // バフェット7原則評価（内在価値を渡す）
+    // センチメント結果を受け取る（すでに並列実行済みなので待ち時間ほぼゼロ）
+    const brandSentiment = await sentimentPromise;
+
+    // バフェット7原則評価（内在価値・センチメントを渡す）
     const buffettAnalysis = evaluateBuffett7Principles(
       quote,
       safeFinancials,
       roeHistory,
-      intrinsicValue
+      intrinsicValue,
+      brandSentiment
     );
 
     // 未来の株価予測（1年・3年・5年）
-    const priceTargets = calculatePriceTargets(currentPrice, quote.trailingPE, safeFinancials.earningsGrowth);
+    const priceTargets = calculatePriceTargets(
+      currentPrice,
+      safeFinancials.trailingEps,   // 株価非依存EPS（優先）
+      quote.trailingPE,
+      safeFinancials.earningsGrowth
+    );
 
     // レスポンス構築
     const response = {
@@ -108,19 +131,38 @@ export async function GET(
 }
 
 // 内在価値計算（簡易DCF + グレアム式）
+//
+// 修正: EPS を「株価 / PE」で計算すると IV ∝ 現在株価 になり
+//       割引率が常に一定になるバグがあった。
+//       trailingEps（Yahoo defaultKeyStatistics）は株価と独立した固定値なので
+//       これを使うことで「株価が上がると割高・下がると割安」が正しく機能する。
 function calculateIntrinsicValue(
   price: number,
-  trailingPE: number | undefined,
+  trailingEps: number | undefined,   // 株価非依存のEPS（優先）
+  trailingPE: number | undefined,    // PE（trailingEpsがない場合のフォールバック）
   earningsGrowth: number | undefined
 ): number {
-  const pe = trailingPE || 15;
-  const eps = price / pe;
+  // EPS取得の優先順位:
+  //   1. trailingEps（株価と独立 → IV が固定値になる ✓）
+  //   2. price / PE（PE が stale な場合は誤差あり）
+  //   3. price / 15（PE=15仮定のフォールバック）
+  let eps: number;
+  if (trailingEps && trailingEps > 0) {
+    eps = trailingEps;                        // 最優先: 固定EPSで正確な内在価値
+  } else if (trailingPE && trailingPE > 0) {
+    eps = price / trailingPE;                 // フォールバック
+  } else {
+    eps = price / 15;                         // 最終フォールバック
+  }
+
+  if (eps <= 0) return 0; // 赤字企業は内在価値計算不可
+
   const growthRate = Math.min((earningsGrowth ?? 5) / 100, 0.25);
 
   // グレアム式: V = EPS × (8.5 + 2g) × (4.4 / Y)
   const grahamValue = eps * (8.5 + 2 * growthRate * 100) * (4.4 / 5);
 
-  // 簡易DCF
+  // 簡易DCF（10年）
   let dcfValue = 0;
   const discountRate = 0.1;
   for (let i = 1; i <= 10; i++) {
@@ -136,23 +178,29 @@ function calculateIntrinsicValue(
 // 未来の株価予測（保守的・標準・楽観的シナリオ）
 function calculatePriceTargets(
   currentPrice: number,
+  trailingEps: number | undefined,
   trailingPE: number | undefined,
   earningsGrowth: number | undefined
 ): Array<{ period: string; years: number; conservative: number; base: number; optimistic: number }> {
   if (currentPrice <= 0) return [];
 
-  const pe = trailingPE || 15;
+  // EPS: trailingEps優先（株価非依存）
+  const pe = trailingPE && trailingPE > 0 ? trailingPE : 15;
+  const eps = (trailingEps && trailingEps > 0)
+    ? trailingEps
+    : currentPrice / pe;
+
+  if (eps <= 0) return [];
+
   const baseGrowthRate = Math.min(Math.max((earningsGrowth ?? 5) / 100, -0.1), 0.3);
   const conservativeRate = Math.max(baseGrowthRate * 0.5, 0.02);  // 最低2%
   const optimisticRate = Math.min(baseGrowthRate * 1.5, 0.4);      // 最高40%
 
   // 将来EPS × 将来PE = 将来株価
-  // 成長に伴ってPEは緩やかに低下（高成長銘柄は将来PEが下がる傾向）
   const futurePE = (rate: number, years: number) =>
     Math.max(12, pe * Math.pow(0.95, years * rate * 3));
 
   const project = (rate: number, years: number) => {
-    const eps = currentPrice / pe;
     const futureEps = eps * Math.pow(1 + rate, years);
     return Math.round(futureEps * futurePE(rate, years));
   };

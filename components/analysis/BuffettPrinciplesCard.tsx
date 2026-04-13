@@ -9,6 +9,7 @@ import {
   TrendingDown,
   Minus,
   Star,
+  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +76,24 @@ interface PrincipleRowProps {
   index: number;
 }
 
+function SentimentBadge({ trend }: { trend: "上昇" | "安定" | "下降" }) {
+  const config = {
+    上昇: { icon: TrendingUp, color: "text-success", bg: "bg-success/10 border-success/20" },
+    安定: { icon: Minus,      color: "text-gold",    bg: "bg-gold/10 border-gold/20" },
+    下降: { icon: TrendingDown, color: "text-danger", bg: "bg-danger/10 border-danger/20" },
+  };
+  const { icon: Icon, color, bg } = config[trend];
+  return (
+    <span className={cn("inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-xs font-medium", bg, color)}>
+      <Icon className="h-3 w-3" />
+      {trend}
+    </span>
+  );
+}
+
 function PrincipleRow({ principle, index }: PrincipleRowProps) {
+  const sentiment = index === 6 ? principle.sentiment : null;
+
   return (
     <div className={cn(
       "rounded-lg p-4 border transition-all",
@@ -115,6 +133,67 @@ function PrincipleRow({ principle, index }: PrincipleRowProps) {
             size="sm"
           />
           <p className="text-xs text-text-muted mt-1.5">{principle.details}</p>
+
+          {/* 原則7のみ: Geminiセンチメントセクション（取得成功時のみ表示） */}
+          {sentiment && (
+            <div className="mt-3 pt-3 border-t border-border/40 space-y-2">
+              {/* ヘッダー */}
+              <div className="flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-pink-400" />
+                <span className="text-xs font-semibold text-text-secondary">
+                  顧客センチメント分析
+                </span>
+                <span className="text-[10px] text-text-muted ml-auto opacity-60">
+                  powered by {sentiment.source}
+                </span>
+              </div>
+
+              {/* スコア + トレンド */}
+              <div className="flex items-center gap-3">
+                {/* センチメントスコア */}
+                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-surface-light border border-border/50 min-w-[64px]">
+                  <span className={cn(
+                    "text-xl font-bold mono-number leading-none",
+                    sentiment.score >= 70 ? "text-success"
+                      : sentiment.score >= 45 ? "text-gold"
+                      : "text-danger"
+                  )}>
+                    {sentiment.score}
+                  </span>
+                  <span className="text-[10px] text-text-muted mt-0.5">/ 100</span>
+                </div>
+
+                <div className="flex flex-col gap-1.5 flex-1">
+                  {/* ブランドトレンド */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-text-muted w-16 shrink-0">トレンド</span>
+                    <SentimentBadge trend={sentiment.trend} />
+                  </div>
+
+                  {/* ポジ/ネガ比率バー */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-text-muted w-16 shrink-0">評判比率</span>
+                    <div className="flex-1 flex h-2 rounded-full overflow-hidden gap-px">
+                      <div
+                        className="bg-success rounded-l-full"
+                        style={{ width: `${sentiment.positiveRatio}%` }}
+                      />
+                      <div
+                        className="bg-danger rounded-r-full"
+                        style={{ width: `${sentiment.negativeRatio}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-success font-medium whitespace-nowrap">
+                      +{sentiment.positiveRatio}%
+                    </span>
+                    <span className="text-[10px] text-danger font-medium whitespace-nowrap">
+                      -{sentiment.negativeRatio}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

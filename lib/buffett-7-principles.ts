@@ -1,5 +1,9 @@
 import { YahooQuote, YahooFinancials } from "./yahoo-finance";
 import { getCEOScore } from "./ceo-reputation";
+import type { BrandSentiment } from "./brand-sentiment";
+
+// センチメントデータ（原則7用）
+export type { BrandSentiment };
 
 // バフェット7原則の評価結果
 export interface BuffettPrincipleScore {
@@ -10,6 +14,7 @@ export interface BuffettPrincipleScore {
   passed: boolean;
   details: string;
   weight: number;
+  sentiment?: BrandSentiment | null; // 原則7のみ使用
 }
 
 export interface Buffett7PrinciplesResult {
@@ -35,7 +40,8 @@ export function evaluateBuffett7Principles(
   quote: YahooQuote,
   financials: YahooFinancials,
   roeHistory: Array<{ year: number; roe: number }>,
-  intrinsicValue?: number
+  intrinsicValue?: number,
+  brandSentiment?: BrandSentiment | null
 ): Buffett7PrinciplesResult {
   const principles: BuffettPrincipleScore[] = [];
   const currentPrice = quote.regularMarketPrice ?? 0;
@@ -99,12 +105,38 @@ export function evaluateBuffett7Principles(
   // ----------------------------------------------------------
   // 3. 安全マージン（内在価値より安く買う）
   // 計算された内在価値と現在株価の乖離度を測定
+  //
+  // PE/PB を動的計算:
+  //   PE = currentPrice / trailingEps  （株価依存、毎回リアルタイムで変化）
+  //   PB = marketCap / totalStockholderEquity （時価総額依存、リアルタイム）
+  //   Yahoo Finance のキャッシュ値はフォールバックとしてのみ使用
   // ----------------------------------------------------------
-  const pe = quote.trailingPE ?? 0;
-  const pb = quote.priceToBook ?? 0;
+  const marketCap = quote.marketCap ?? 0;
+
+  // PER: currentPrice / trailingEps（株価と直結して変動）
+  const pe: number = (() => {
+    if (currentPrice > 0 && financials.trailingEps && financials.trailingEps > 0) {
+      return currentPrice / financials.trailingEps; // リアルタイム計算
+    }
+    if (marketCap > 0 && financials.netIncomeToCommon && financials.netIncomeToCommon > 0) {
+      return marketCap / financials.netIncomeToCommon; // 時価総額ベース
+    }
+    return quote.trailingPE ?? financials.trailingPE ?? 0; // Yahoo キャッシュ値フォールバック
+  })();
+
+  // PBR: marketCap / 純資産（時価総額と直結して変動）
+  const pb: number = (() => {
+    if (marketCap > 0 && financials.totalStockholderEquity && financials.totalStockholderEquity > 0) {
+      return marketCap / financials.totalStockholderEquity; // リアルタイム計算
+    }
+    if (currentPrice > 0 && financials.bookValuePerShare && financials.bookValuePerShare > 0) {
+      return currentPrice / financials.bookValuePerShare; // 1株純資産ベース
+    }
+    return quote.priceToBook ?? financials.priceToBook ?? 0; // Yahoo キャッシュ値フォールバック
+  })();
 
   let marginScore = 50;
-  // 内在価値との比較
+  // 内在価値との比較（最優先：trailingEpsベースの固定内在価値）
   if (intrinsicValue && intrinsicValue > 0 && currentPrice > 0) {
     const discount = ((intrinsicValue - currentPrice) / intrinsicValue) * 100;
     if (discount >= 40) marginScore = 95;       // 40%以上割安
@@ -114,7 +146,7 @@ export function evaluateBuffett7Principles(
     else if (discount >= -20) marginScore = 35; // やや割高
     else marginScore = 20;                       // 大幅割高
   } else {
-    // 内在価値がない場合はPE/PBで代用
+    // 内在価値がない場合は動的PE/PBで代用
     if (pe > 0 && pe < 15) marginScore += 30;
     else if (pe > 0 && pe < 20) marginScore += 15;
     else if (pe > 0 && pe < 25) marginScore += 5;
@@ -245,50 +277,59 @@ export function evaluateBuffett7Principles(
   else if (cr < 1.0) mrMarketScore -= 10;
 
   mrMarketScore = Math.max(0, Math.min(100, mrMarketScore));
+  // detailsに動的計算であることを明示
+  const peLabel  = pe  > 0 ? pe.toFixed(1)  : "N/A";
+  const pbLabel  = pb  > 0 ? pb.toFixed(2)  : "N/A";
   principles.push({
     name: "Mr.マーケットの活用",
     nameEn: "Mr. Market Advantage",
     description: "市場の非合理な価格変動を味方につけ割安で買えるか",
     score: mrMarketScore,
     passed: mrMarketScore >= 50,
-    details: `PER: ${pe > 0 ? pe.toFixed(1) : "N/A"} | PBR: ${pb > 0 ? pb.toFixed(2) : "N/A"} | D/E: ${dte.toFixed(0)}%`,
+    details: `PER: ${peLabel} | PBR: ${pbLabel} | D/E: ${dte.toFixed(0)}%`,
     weight: 0.10,
   });
 
   // ----------------------------------------------------------
   // 7. 顧客に愛されているか（ブランド力）
-  // 高い粗利益率・売上成長・価格決定力でブランド強度を測定
+  // 財務指標（粗利・売上・利益成長）＋ リアルタイムセンチメント
   // ----------------------------------------------------------
   const revGrowth = financials.revenueGrowth ?? 0;
   const earnGrowth = financials.earningsGrowth ?? 0;
 
-  let brandScore = 30;
+  let financialBrandScore = 30;
   // 粗利益率（価格決定力 = 顧客の支払い意欲）
-  if (gm >= 70) brandScore += 40;
-  else if (gm >= 60) brandScore += 35;
-  else if (gm >= 50) brandScore += 28;
-  else if (gm >= 40) brandScore += 20;
-  else if (gm >= 30) brandScore += 12;
-  else brandScore += 5;
+  if (gm >= 70) financialBrandScore += 40;
+  else if (gm >= 60) financialBrandScore += 35;
+  else if (gm >= 50) financialBrandScore += 28;
+  else if (gm >= 40) financialBrandScore += 20;
+  else if (gm >= 30) financialBrandScore += 12;
+  else financialBrandScore += 5;
   // 売上成長率（顧客が増え続けているか）
-  if (revGrowth >= 20) brandScore += 20;
-  else if (revGrowth >= 10) brandScore += 15;
-  else if (revGrowth >= 5) brandScore += 8;
-  else if (revGrowth < 0) brandScore -= 10;
+  if (revGrowth >= 20) financialBrandScore += 20;
+  else if (revGrowth >= 10) financialBrandScore += 15;
+  else if (revGrowth >= 5) financialBrandScore += 8;
+  else if (revGrowth < 0) financialBrandScore -= 10;
   // 利益成長率（顧客が価値を認め続けているか）
-  if (earnGrowth >= 20) brandScore += 10;
-  else if (earnGrowth >= 10) brandScore += 5;
-  else if (earnGrowth < 0) brandScore -= 5;
+  if (earnGrowth >= 20) financialBrandScore += 10;
+  else if (earnGrowth >= 10) financialBrandScore += 5;
+  else if (earnGrowth < 0) financialBrandScore -= 5;
+  financialBrandScore = Math.max(0, Math.min(100, financialBrandScore));
 
-  brandScore = Math.max(0, Math.min(100, brandScore));
+  // センチメントデータがある場合: 財務65% + センチメント35% でブレンド
+  const brandScore = brandSentiment
+    ? Math.round(financialBrandScore * 0.65 + brandSentiment.score * 0.35)
+    : financialBrandScore;
+
   principles.push({
     name: "顧客に愛されているか",
     nameEn: "Customer Love & Brand",
     description: "顧客が高い価格を喜んで払うブランド力・価格決定力",
-    score: brandScore,
+    score: Math.max(0, Math.min(100, brandScore)),
     passed: brandScore >= 55,
     details: `粗利益率: ${gm.toFixed(1)}% | 売上成長: ${revGrowth.toFixed(1)}% | 利益成長: ${earnGrowth.toFixed(1)}%`,
     weight: 0.10,
+    sentiment: brandSentiment ?? null,
   });
 
   // ----------------------------------------------------------

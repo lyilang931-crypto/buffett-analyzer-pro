@@ -26,7 +26,10 @@
       "Bash(npx tsc --noEmit)",
       "Bash(node -e \"const d=require\\(''fs''\\).readFileSync\\(''/dev/stdin'',''utf8''\\);const j=JSON.parse\\(d\\);console.log\\(''price:'',j.data.quote.price,''score:'',j.data.buffettAnalysis.totalScore,''signal:'',j.data.buffettAnalysis.signal,''10x:'',j.data.buffettAnalysis.tenBaggerProbability,''%'',''targets:'',j.data.priceTargets?.length,''items'',''1yr base:'',j.data.priceTargets?.[0]?.base\\)\")",
       "Bash(node -e \"const j=require\\(''C:/temp/aapl_test.json''\\);console.log\\(''price:'',j.data.quote.price,''score:'',j.data.buffettAnalysis.totalScore,''signal:'',j.data.buffettAnalysis.signal,''10x:'',j.data.buffettAnalysis.tenBaggerProbability+''%'',''targets:'',j.data.priceTargets?.length+''items'',''1yr:'',j.data.priceTargets?.[0]?.base\\)\")",
-      "Bash(npx next build)"
+      "Bash(npx next build)",
+      "Bash(mkdir -p \"$APPDATA/temp\")",
+      "Bash(\"$USERPROFILE/berk_sub.json\")",
+      "Bash(xargs grep:*)"
     ]
   }
 }

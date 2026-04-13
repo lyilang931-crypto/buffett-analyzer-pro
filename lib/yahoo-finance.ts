@@ -89,6 +89,11 @@ export interface YahooFinancials {
   // From incomeStatementHistory
   totalRevenueLY?: number;
   netIncomeLY?: number;
+  // From defaultKeyStatistics — 株価非依存のEPS（内在価値計算の基礎）
+  trailingEps?: number;          // 直近12ヶ月EPS（株価と独立。内在価値計算に使用）
+  forwardEps?: number;           // 予想EPS
+  sharesOutstanding?: number;    // 発行済株式数
+  bookValuePerShare?: number;    // 1株純資産（PBR計算用）
 }
 
 export interface YahooHistoricalPrice {
@@ -216,11 +221,18 @@ export async function getFinancials(symbol: string): Promise<YahooFinancials | n
     };
 
     const result = await yf.quoteSummary(symbol, {
-      modules: ['financialData', 'summaryDetail', 'incomeStatementHistory', 'balanceSheetHistory'],
+      modules: [
+        'financialData',
+        'summaryDetail',
+        'incomeStatementHistory',
+        'balanceSheetHistory',
+        'defaultKeyStatistics', // trailingEps / sharesOutstanding / bookValue
+      ],
     });
 
-    const fd = (result.financialData ?? {}) as Record<string, unknown>;
-    const sd = (result.summaryDetail ?? {}) as Record<string, unknown>;
+    const fd  = (result.financialData      ?? {}) as Record<string, unknown>;
+    const sd  = (result.summaryDetail      ?? {}) as Record<string, unknown>;
+    const dks = (result.defaultKeyStatistics ?? {}) as Record<string, unknown>;
 
     // incomeStatementHistory
     const incomeHistory = result.incomeStatementHistory as
@@ -262,7 +274,7 @@ export async function getFinancials(symbol: string): Promise<YahooFinancials | n
       earningsGrowth: pct(fd.earningsGrowth),
       totalCash: rawNum(fd.totalCash),
       totalDebt: rawNum(fd.totalDebt),
-      debtToEquity: rawNum(fd.debtToEquity), // Yahoo already returns as percentage
+      debtToEquity: rawNum(fd.debtToEquity),
       currentRatio: rawNum(fd.currentRatio),
       quickRatio: rawNum(fd.quickRatio),
       freeCashflow: rawNum(fd.freeCashflow),
@@ -281,6 +293,11 @@ export async function getFinancials(symbol: string): Promise<YahooFinancials | n
       // incomeStatementHistory
       totalRevenueLY: rawNum(latestIncome.totalRevenue),
       netIncomeLY: rawNum(latestIncome.netIncome),
+      // defaultKeyStatistics — 株価と独立したEPS（内在価値計算の基礎）
+      trailingEps: rawNum(dks.trailingEps),
+      forwardEps: rawNum(dks.forwardEps),
+      sharesOutstanding: rawNum(dks.sharesOutstanding),
+      bookValuePerShare: rawNum(dks.bookValue), // Yahoo returns "bookValue" = bookValuePerShare
     };
 
     return financials;
